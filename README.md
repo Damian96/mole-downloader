@@ -13,3 +13,4 @@ Make sure to remove your temporary files when you are completely done with the t
 ---
 
 Created by [Damian96](https://github.com/Damian96)
+Contributor: [pgram1](https://github.com/pgram1)
