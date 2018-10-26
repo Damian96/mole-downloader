@@ -1,10 +1,7 @@
 #!/bin/sh
-
-# Debuging mode
-set -x;
 UN="";
 PW="";
-TEMP="/var/run/mole-downloader";
+TEMP="moleDownloader";
 COOKIES="$TEMP/cookies.txt";
 LOGINDATA="$TEMP/login.txt";
 LOGIN="https://mole.citycollege.sheffield.eu/claroline/auth/login.php";
@@ -15,18 +12,18 @@ getLoginData() {
     while [[ true ]]; do
 
         while [[ true ]]; do
-            echo "Please enter you mole.citycollege.sheffield.eu username: ";
+            printf "\nPlease enter your mole.citycollege.sheffield.eu username: ";
             read -r UN;
 
             if [[ `expr "$UN" : '[a-z]*'` == 0 ]]; then
-                echo "Invalid username.";
+                printf "Invalid username.\n";
             else
                 break;
             fi
         done
 
         while [[ true ]]; do
-            echo "Please enter your mole.citycollege.sheffield.eu password: ";
+            printf "\nPlease enter your mole.citycollege.sheffield.eu password: ";
             read -r -s PW;
 
             if [[ -z "$PW" ]]; then
@@ -62,13 +59,13 @@ readLoginData() {
     curl -c "$COOKIES" -d "login=$UN&password=$PW" -X POST $LOGIN -L --post302 2>&1 | grep -q "$LOGINCHECK";
 
     if [[ $? != 0 ]]; then #LOGIN DIDNT SUCCEED
-        echo "Incorrect login data.";
+        printf "\nIncorrect login data.\n";
         getLoginData;
     fi;
 }
 
 if [[ ! -d "$TEMP" ]]; then # Temp folder does not exist
-    echo "Creating data folder...";
+    printf "\nCreating data folder...\n";
     mkdir "$TEMP";
 fi
 
@@ -79,13 +76,13 @@ else
 fi
 
 while [[ true ]]; do
-    echo "Please insert the course code: ";
+    printf "\nPlease insert the course code:\n";
     read -r CID;
 
     if [[ `expr "$CID" : 'CCP[0-9]\{4\}'` == 0 ]]; then
-        echo "Invalid course code.";
+        printf "\nInvalid course code.\n";
     else
         curl --silent --output "./MOLE.$CID.complete.zip" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G https://mole.citycollege.sheffield.eu/claroline/document/document.php;
-        echo "Downloaded: ./MOLE.$CID.complete.zip";
+        printf "\nDownloaded: ./MOLE.$CID.complete.zip\nMake sure you press Ctrl+C and delete the moleDownloader when you are done! ^_^\n";
     fi;
 done
