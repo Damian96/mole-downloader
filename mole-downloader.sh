@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# Debuging mode
+# Enable Debuging mode
 set -x;
+
 UN="";
 PW="";
 TEMP="/var/run/mole-downloader";
@@ -79,13 +80,21 @@ else
 fi
 
 while [[ true ]]; do
-    echo "Please insert the course code: ";
+    echo -n "Please insert the course code, or 'q' to exit: ";
     read -r CID;
 
-    if [[ `expr "$CID" : 'CCP[0-9]\{4\}'` == 0 ]]; then
+    if [[ "$CID" == "q" ]]; then
+        echo "Bye! See you again!";
+        exit 0;
+    elif [[ `expr "$CID" : 'CCP[0-9]\{4\}'` == 0 ]]; then
         echo "Invalid course code.";
     else
         curl --silent --output "./MOLE.$CID.complete.zip" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G https://mole.citycollege.sheffield.eu/claroline/document/document.php;
         echo "Downloaded: ./MOLE.$CID.complete.zip";
     fi;
 done
+
+# Disable Debugging Mode
+set +x;
+
+exit 0;
