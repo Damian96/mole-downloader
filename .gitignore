@@ -1,3 +1,14 @@
 /Backups/
 /User/
+/Cache/
+/CachedData/
+/CachedExtensions/
+/Local Storage/
+/logs/
+Cookies
+Cookies-journal
+languagepacks.json
+machineid
+Preferences
+storage.json
 *.zip
