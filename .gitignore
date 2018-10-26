@@ -11,4 +11,6 @@ languagepacks.json
 machineid
 Preferences
 storage.json
+
+/moleDownloader/
 *.zip
