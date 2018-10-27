@@ -1,37 +1,40 @@
 #!/bin/sh
 
 # Enable Debugging Mode
-set -x;
+# set -x;
 
 UN="";
 PW="";
 TEMP="moleDownloader";
 COOKIES="$TEMP/cookies.txt";
 LOGINDATA="$TEMP/login.txt";
+COURSES="$TEMP/course-list.txt";
 LOGIN="https://mole.citycollege.sheffield.eu/claroline/auth/login.php";
 LOGINCHECK="My course list";
 DOWNLOAD="https://mole.citycollege.sheffield.eu/claroline/document/document.php";
+COURSELIST=("${@}");
+DESKTOP="$TEMP/desktop.html";
 
 getLoginData() {
 
     while [[ true ]]; do
 
         while [[ true ]]; do
-            printf -- "\nPlease enter your mole.citycollege.sheffield.eu username: ";
+            printf "\n%s" "Please enter your mole.citycollege.sheffield.eu username: ";
             read -r UN;
 
             if [[ `expr "$UN" : '[a-z]*'` == 0 ]]; then
-                printf "\nInvalid username.";
+                printf "\n%s" "Invalid username.";
             else
                 break;
             fi
         done
 
         while [[ true ]]; do
-            printf -- "\nPlease enter your mole.citycollege.sheffield.eu password: ";
+            printf "\n%s" "Please enter your mole.citycollege.sheffield.eu password: ";
             read -r -s PW;
 
-            if [[ -z "$PW" ]]; then
+            if [[ -z "${PW// }" ]]; then
                 continue;
             else
                 break;
@@ -64,23 +67,43 @@ readLoginData() {
     curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST $LOGIN -L --post302 2>&1 | grep -q "$LOGINCHECK";
 
     if [[ $? != 0 ]]; then #LOGIN DIDNT SUCCEED
-        printf "\nIncorrect login data.";
+        printf "\n%s" "Incorrect login data.";
         getLoginData;
     fi;
 }
 
-# @TODO: Implement getCourseList
-# getCourseList() {
-#     OUTPUT=`curl -c "$COOKIES" -d "login=$UN&password=$PW" -X POST $LOGIN -L --post302 2>&1 | grep -o "CCP[0-9]\{4\}"`;
-#     while IFS='' read -r line || [[ -n "$line" ]]; do
+getCourseList() {
+    curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST "$LOGIN" -L --post302 -o "$DESKTOP";
 
-#         echo $line;
+    local INDEX=0;
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+        local TEMP=`echo $line | grep -Po "(?<=\?cid\=)(CCP[0-9]{4})"`;
 
-#     done < $OUTPUT;    
-# }
+        if [[ ! -z "${TEMP// }" ]]; then
+            COURSELIST[INDEX++]=$TEMP;
+        fi;
 
+    done < $DESKTOP
+
+    for i in "${COURSELIST[@]}"; do
+        printf "%s\n" "$i" ;
+    done > $COURSES
+}
+
+readCourseList() {
+    local INDEX=0;
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+
+        if [[ ! -z "${line// }" ]]; then
+            COURSELIST[INDEX++]=$line;
+        fi;
+
+    done < $COURSES
+}
+
+# Initialization
 if [[ ! -d "$TEMP" ]]; then # Temp folder does not exist
-    printf "\nCreating data folder...";
+    printf "%s\n" "Creating data folder..." ;
     mkdir "$TEMP";
 fi
 
@@ -90,26 +113,39 @@ else
     readLoginData;
 fi
 
-getCourseList;
-exit 0;
+if [[ ! -a "$COURSES" ]]; then # Login Data do not exist
+    printf "%s" "Retrieving course list...";
+    getCourseList;
+else
+    printf "%s" "Reading course list...";
+    readCourseList;
+fi
 
 while [[ true ]]; do
-    printf -- "\nPlease insert the course code, or 'q' to exit: ";
+    printf "\n\n%s" "Mole's Course List:";
+    for i in "${COURSELIST[@]}"; do
+        printf "\n%s" "$i";
+    done
+
+    printf "\n\n%s" "Insert 'q' or 'Q' to exit.";
+    printf "\n%s" "Please insert the course code: ";
     read -r CID;
 
-    if [[ "$CID" == "q" ]]; then
-        printf "\nBye!\n";
-        exit 0;
+    if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
+        printf "\n%s\n" "Bye!";
+        return 0;
     elif [[ `expr "$CID" : 'CCP[0-9]\{4\}'` == 0 ]]; then
-        printf "\nInvalid course code.";
+        printf "\n%s" "Invalid course code.";
     else
-        curl --silent --output "./MOLE.$CID.complete.zip" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G $DOWNLOAD;
-        printf "\nDownloaded: ./MOLE.$CID.complete.zip";
-        printf "\nMake sure you delete the ./moleDownloader folder when you are done!";
+        FILENAME="./MOLE.$CID.complete.zip";
+        printf "\n%s\n" "Downloading $CID into $FILENAME...";
+        curl --silent --output "$FILENAME" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G $DOWNLOAD;
+        printf "\n%s" "Downloaded @ $FILENAME";
+        printf "\n%s" "Make sure you delete the ./moleDownloader folder when you are done!";
     fi;
 done
 
 # Disable Debugging mode
 set +x;
 
-exit 0;
+return 0;
