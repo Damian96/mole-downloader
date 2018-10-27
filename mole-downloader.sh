@@ -3,6 +3,7 @@
 # Enable Debugging Mode
 # set -x;
 
+# Initialize Global Variables
 UN="";
 PW="";
 TEMP="moleDownloader";
@@ -53,7 +54,7 @@ getLoginData() {
 }
 
 readLoginData() {
-    COUNT=0;
+    local COUNT=0;
     while IFS='' read -r line || [[ -n "$line" ]]; do
         if [[ "$COUNT" == 0 ]]; then
             UN=$line;
@@ -146,6 +147,24 @@ while [[ true ]]; do
 done
 
 # Disable Debugging mode
-set +x;
+# set +x;
+
+# Unset Global Variables
+unset UN;
+unset PW;
+unset COURSES;
+unset LOGINDATA;
+unset LOGIN;
+unset LOGINCHECK;
+unset DOWNLOAD;
+unset COURSELIST;
+unset DESKTOP;
+unset FILENAME;
+unset CID;
+
+unset readLoginData;
+unset getLoginData;
+unset readCourseList;
+unset getCourseList;
 
 return 0;
