@@ -134,7 +134,7 @@ while [[ true ]]; do
 
     if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
         printf "\n%s\n" "Bye!";
-        return 0;
+        exit 0;
     elif [[ `expr "$CID" : 'CCP[0-9]\{4\}'` == 0 ]]; then
         printf "\n%s" "Invalid course code.";
     else
@@ -167,4 +167,4 @@ unset getLoginData;
 unset readCourseList;
 unset getCourseList;
 
-return 0;
+exit 0;
