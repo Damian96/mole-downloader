@@ -14,4 +14,6 @@ Preferences
 storage.json
 
 /moleDownloader/
+/.vscode/
+/mole-downloader_temp/
 *.zip

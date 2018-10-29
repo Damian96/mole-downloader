@@ -6,7 +6,7 @@
 # Initialize Global Variables
 UN="";
 PW="";
-TEMP="moleDownloader";
+TEMP="mole-downloader_temp";
 COOKIES="$TEMP/cookies.txt";
 LOGINDATA="$TEMP/login.txt";
 COURSES="$TEMP/course-list.txt";
@@ -48,6 +48,8 @@ getLoginData() {
         if [[ $? == 0 ]]; then #LOGIN SUCCEDED
             printf '%s\n' "$UN" "$PW" > "$LOGINDATA";
             break;
+        else
+            printf "\n%s\n" "Invalid username / password.";
         fi;
 
     done
@@ -74,14 +76,19 @@ readLoginData() {
 }
 
 getCourseList() {
-    curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST "$LOGIN" -L --post302 -o "$DESKTOP";
+    if [[ ! -a "$DESKTOP" ]]; then
+        printf "\n%s\n" "Retrieving desktop...";
+        curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST "$LOGIN" -L --post302 -o "$DESKTOP";
+    else
+        printf "\n%s\n" "Reading desktop...";
+    fi
 
     local INDEX=0;
     while IFS='' read -r line || [[ -n "$line" ]]; do
-        local TEMP=`echo $line | grep -Po "(?<=\?cid\=)(CCP[0-9]{4})"`;
+        local CODE=`echo $line | grep -Po "(?<=\?cid\=)([A-Z]{3}[0-9]{4})"`;
 
-        if [[ ! -z "${TEMP// }" ]]; then
-            COURSELIST[INDEX++]=$TEMP;
+        if [[ ! -z "${CODE// }" ]]; then
+            COURSELIST[INDEX++]=$CODE;
         fi;
 
     done < $DESKTOP
@@ -115,10 +122,10 @@ else
 fi
 
 if [[ ! -a "$COURSES" ]]; then # Login Data do not exist
-    printf "%s" "Retrieving course list...";
+    printf "\n%s\n" "Retrieving course list...";
     getCourseList;
 else
-    printf "%s" "Reading course list...";
+    printf "\n%s\n" "Reading course list...";
     readCourseList;
 fi
 
@@ -135,7 +142,7 @@ while [[ true ]]; do
     if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
         printf "\n%s\n" "Bye!";
         exit 0;
-    elif [[ `expr "$CID" : 'CCP[0-9]\{4\}'` == 0 ]]; then
+    elif [[ `expr "$CID" : '[A-Z]\{3\}[0-9]\{4\}'` == 0 ]]; then
         printf "\n%s" "Invalid course code.";
     else
         FILENAME="./MOLE.$CID.complete.zip";
