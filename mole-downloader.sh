@@ -13,7 +13,7 @@ COURSES="$TEMP/course-list.txt";
 LOGIN="https://mole.citycollege.sheffield.eu/claroline/auth/login.php";
 LOGINCHECK="My course list";
 DOWNLOAD="https://mole.citycollege.sheffield.eu/claroline/document/document.php";
-COURSELIST=("${@}");
+declare -A COURSELIST;
 DESKTOP="$TEMP/desktop.html";
 
 getLoginData() {
@@ -85,26 +85,37 @@ getCourseList() {
 
     local INDEX=0;
     while IFS='' read -r line || [[ -n "$line" ]]; do
-        local CODE=`echo $line | grep -Po "(?<=\?cid\=)([A-Z]{3}[0-9]{4})"`;
+        local CODE_PATT=".*\?cid=(.*)\">.*";
+        local TITLE_PATT=".*\?cid=.*\">(.*)<\/a>";
 
-        if [[ ! -z "${CODE// }" ]]; then
-            COURSELIST[INDEX++]=$CODE;
-        fi;
+        if [[ $line =~ $CODE_PATT ]]; then
+            local CODE=${BASH_REMATCH[1]};
+            if [[ $line =~ $TITLE_PATT ]]; then
+                local TITLE=${BASH_REMATCH[1]};
+                # printf "\ncode:%s" "$CODE";
+                # printf "\ntitle:%s" "$TITLE";
+                COURSELIST[$CODE]=$TITLE;
+            fi
+        fi
 
     done < $DESKTOP
 
-    for i in "${COURSELIST[@]}"; do
-        printf "%s\n" "$i" ;
+    for C in "${!COURSELIST[@]}"; do
+        printf "%s,%s\n" "$C" "${COURSELIST[$C]}";
     done > $COURSES
 }
 
 readCourseList() {
-    local INDEX=0;
+    local KEY;
+    local VALUE;
     while IFS='' read -r line || [[ -n "$line" ]]; do
 
         if [[ ! -z "${line// }" ]]; then
+            while IFS='' read -r line || [[ -n "$line" ]]; do
+
+            done <<< "$line"
             COURSELIST[INDEX++]=$line;
-        fi;
+        fi
 
     done < $COURSES
 }
@@ -131,8 +142,9 @@ fi
 
 while [[ true ]]; do
     printf "\n\n%s" "Mole's Course List:";
-    for i in "${COURSELIST[@]}"; do
-        printf "\n%s" "$i";
+
+    for C in "${!COURSELIST[@]}"; do
+        printf "\n%s: %s" "$C" "${COURSELIST[$C]}"
     done
 
     printf "\n\n%s" "Insert 'q' or 'Q' to exit.";
@@ -140,17 +152,17 @@ while [[ true ]]; do
     read -r CID;
 
     if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
+        printf "\n%s" "Make sure you delete the ./moleDownloader folder when you are done!";
         printf "\n%s\n" "Bye!";
         exit 0;
-    elif [[ `expr "$CID" : '[A-Z]\{3\}[0-9]\{4\}'` == 0 ]]; then
+    elif [[ ! ${COURSELIST[$CID]} ]]; then
         printf "\n%s" "Invalid course code.";
     else
         FILENAME="./MOLE.$CID.complete.zip";
         printf "\n%s\n" "Downloading $CID into $FILENAME...";
         curl --silent --output "$FILENAME" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G $DOWNLOAD;
         printf "\n%s" "Downloaded @ $FILENAME";
-        printf "\n%s" "Make sure you delete the ./moleDownloader folder when you are done!";
-    fi;
+    fi
 done
 
 # Disable Debugging mode
