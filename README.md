@@ -9,13 +9,13 @@ To use just run it with bash like:
 bash mole-downloader.sh
 ```
 
-Make sure to remove your temporary files when you are completely done with the tool! (moleDownloader directory)
+Make sure to remove your temporary files when you are completely done with the tool.
 
 # Contributors
 
 Created by [Damian96](https://github.com/Damian96)
 
-Main Contributor: [pgram1](https://github.com/pgram1)
+Contributor: [pgram1](https://github.com/pgram1)
 
 # License
 UNLICENSED
