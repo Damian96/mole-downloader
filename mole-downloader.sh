@@ -70,7 +70,7 @@ readLoginData() {
     curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST $LOGIN -L --post302 2>&1 | grep -q "$LOGINCHECK";
 
     if [[ $? != 0 ]]; then #LOGIN DIDNT SUCCEED
-        printf "\n%s" "Incorrect login data.";
+        printf "\n%s" "Incorrect username / password.";
         getLoginData;
     fi;
 }
@@ -104,8 +104,7 @@ getCourseList() {
 }
 
 readCourseList() {
-    local KEY;
-    local VALUE;
+
     while IFS='' read -r line || [[ -n "$line" ]]; do
 
         if [[ ! -z "${line// }" ]]; then
@@ -127,6 +126,7 @@ fi
 if [[ ! -a "$LOGINDATA" ]]; then # Login Data do not exist
     getLoginData;
 else
+    printf "\n%s" "Reading login credentials...";
     readLoginData;
 fi
 
@@ -149,8 +149,9 @@ while [[ true ]]; do
     printf "\n%s" "Please insert the course code: ";
     read -r CID;
 
+    printf "\n%s\n" "Make sure you delete the '$TEMP' folder when you are done!";
+
     if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
-        printf "\n%s" "Make sure you delete the '$TEMP' folder when you are done!";
         printf "\n%s\n" "Bye!";
         exit 0;
     elif [[ ! ${COURSELIST[$CID]} ]]; then
