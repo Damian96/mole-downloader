@@ -92,8 +92,6 @@ getCourseList() {
             local CODE=${BASH_REMATCH[1]};
             if [[ $line =~ $TITLE_PATT ]]; then
                 local TITLE=${BASH_REMATCH[1]};
-                # printf "\ncode:%s" "$CODE";
-                # printf "\ntitle:%s" "$TITLE";
                 COURSELIST[$CODE]=$TITLE;
             fi
         fi
@@ -111,10 +109,10 @@ readCourseList() {
     while IFS='' read -r line || [[ -n "$line" ]]; do
 
         if [[ ! -z "${line// }" ]]; then
-            while IFS='' read -r line || [[ -n "$line" ]]; do
-
-            done <<< "$line"
-            COURSELIST[INDEX++]=$line;
+            local PARTS;
+            IFS=',' read -ra PARTS <<< "$line"
+            COURSELIST[${PARTS[0]}]=${PARTS[1]};
+            IFS='';
         fi
 
     done < $COURSES
@@ -152,7 +150,7 @@ while [[ true ]]; do
     read -r CID;
 
     if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
-        printf "\n%s" "Make sure you delete the ./moleDownloader folder when you are done!";
+        printf "\n%s" "Make sure you delete the '$TEMP' folder when you are done!";
         printf "\n%s\n" "Bye!";
         exit 0;
     elif [[ ! ${COURSELIST[$CID]} ]]; then
