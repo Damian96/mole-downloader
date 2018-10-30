@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Enable Debugging Mode
 # set -x;
@@ -153,7 +153,7 @@ while [[ true ]]; do
 
     if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
         printf "\n%s\n" "Bye!";
-        exit 0;
+        break;
     elif [[ ! ${COURSELIST[$CID]} ]]; then
         printf "\n%s" "Invalid course code.";
     else
