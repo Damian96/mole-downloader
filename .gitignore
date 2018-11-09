@@ -15,5 +15,5 @@ storage.json
 
 /moleDownloader/
 /.vscode/
-/mole-downloader_temp/
+/temp_mole-downloader/
 *.zip
