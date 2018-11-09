@@ -6,7 +6,7 @@
 # Initialize Global Variables
 UN="";
 PW="";
-TEMP="mole-downloader_temp";
+TEMP="temp_mole-downloader";
 COOKIES="$TEMP/cookies.txt";
 LOGINDATA="$TEMP/login.txt";
 COURSES="$TEMP/course-list.txt";
@@ -37,6 +37,9 @@ getLoginData() {
 
             if [[ -z "${PW// }" ]]; then
                 continue;
+            elif [[ `expr "$PW" : '[0-9]{3}[a-z]3[0-9]{3}'` != 0 ]]; then
+                printf "\n%s" "Invalid password.";
+                continue;
             else
                 break;
             fi
@@ -46,11 +49,12 @@ getLoginData() {
         curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST $LOGIN -L --post302 2>&1 | grep -q "$LOGINCHECK";
 
         if [[ $? == 0 ]]; then #LOGIN SUCCEDED
+            printf "\n%s\n%s" "Successfull login." "Stored login data.";
             printf '%s\n' "$UN" "$PW" > "$LOGINDATA";
             break;
         else
             printf "\n%s\n" "Invalid username / password.";
-        fi;
+        fi
 
     done
 }
@@ -72,7 +76,7 @@ readLoginData() {
     if [[ $? != 0 ]]; then #LOGIN DIDNT SUCCEED
         printf "\n%s" "Incorrect username / password.";
         getLoginData;
-    fi;
+    fi
 }
 
 getCourseList() {
@@ -104,7 +108,6 @@ getCourseList() {
 }
 
 readCourseList() {
-
     while IFS='' read -r line || [[ -n "$line" ]]; do
 
         if [[ ! -z "${line// }" ]]; then
@@ -160,7 +163,12 @@ while [[ true ]]; do
         FILENAME="./MOLE.$CID.complete.zip";
         printf "\n%s\n" "Downloading $CID into $FILENAME...";
         curl --silent --output "$FILENAME" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G $DOWNLOAD;
-        printf "\n%s" "Downloaded @ $FILENAME";
+
+        if [[ $? == 0 ]]; then
+            printf "\n%s" "Downloaded @ $FILENAME";
+        else
+            printf "\n%s" "Something went wrong while downloading the files.";
+        fi
     fi
 done
 
