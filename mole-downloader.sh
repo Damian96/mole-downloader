@@ -123,6 +123,7 @@ readCourseList() {
 # Initialization
 if [[ ! -d "$TEMP" ]]; then # Temp folder does not exist
     printf "%s\n" "Creating data folder..." ;
+    printf "%s\n" "Make sure you delete the '$TEMP' folder when you are done!";
     mkdir "$TEMP";
 fi
 
