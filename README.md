@@ -18,4 +18,4 @@ Created by [Damian96](https://github.com/Damian96)
 Contributor: [pgram1](https://github.com/pgram1)
 
 # License
-UNLICENSED
+Licensed under the [MIT license](LICENSE)
