@@ -120,6 +120,18 @@ readCourseList() {
     done < $COURSES
 }
 
+downloadCourse() {
+    FILENAME="./MOLE.$CID.complete.zip";
+    printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME...";
+    curl --silent --output "$FILENAME" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G $DOWNLOAD;
+
+    if [[ $? == 0 ]]; then
+        printf "\n%s" "Downloaded @ $FILENAME";
+    else
+        printf "\n%s" "Something went wrong while downloading course $CID.";
+    fi
+}
+
 # Initialization
 if [[ ! -d "$TEMP" ]]; then # Temp folder does not exist
     printf "%s\n" "Creating data folder..." ;
@@ -150,6 +162,7 @@ while [[ true ]]; do
     done
 
     printf "\n\n%s" "Insert 'q' or 'Q' to exit.";
+    printf "\n%s" "Insert 'a' or 'A' to download all courses.";
     printf "\n%s" "Please insert the course code: ";
     read -r CID;
 
@@ -158,18 +171,15 @@ while [[ true ]]; do
     if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
         printf "\n%s\n" "Bye!";
         break;
+    elif [[ "$CID" == "a" || "$CID" == "A" ]]; then
+        for C in "${!COURSELIST[@]}"; do
+            CID=$C;
+            downloadCourse;
+        done
     elif [[ ! ${COURSELIST[$CID]} ]]; then
         printf "\n%s" "Invalid course code.";
     else
-        FILENAME="./MOLE.$CID.complete.zip";
-        printf "\n%s\n" "Downloading $CID into $FILENAME...";
-        curl --silent --output "$FILENAME" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G $DOWNLOAD;
-
-        if [[ $? == 0 ]]; then
-            printf "\n%s" "Downloaded @ $FILENAME";
-        else
-            printf "\n%s" "Something went wrong while downloading the files.";
-        fi
+        donwloadCourse;
     fi
 done
 
@@ -185,6 +195,7 @@ unset LOGIN;
 unset LOGINCHECK;
 unset DOWNLOAD;
 unset COURSELIST;
+unset C;
 unset DESKTOP;
 unset FILENAME;
 unset CID;
