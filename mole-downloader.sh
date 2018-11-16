@@ -16,6 +16,13 @@ DOWNLOAD="https://mole.citycollege.sheffield.eu/claroline/document/document.php"
 declare -A COURSELIST;
 DESKTOP="$TEMP/desktop.html";
 
+_trapCmd() {
+    trap 'kill -TERM $PID' TERM
+    eval "$1" &
+    PID=$!
+    wait $PID
+}
+
 getLoginData() {
 
     while [[ true ]]; do
@@ -46,7 +53,7 @@ getLoginData() {
         done
 
         # Auth and create cookie jar
-        curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST $LOGIN -L --post302 2>&1 | grep -q "$LOGINCHECK";
+        _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST $LOGIN -L --post302 2>&1 | grep -q \"$LOGINCHECK\"";
 
         if [[ $? == 0 ]]; then #LOGIN SUCCEDED
             printf "\n%s\n%s" "Successfull login." "Stored login data.";
@@ -71,7 +78,7 @@ readLoginData() {
     done < "$LOGINDATA"
 
     # Auth and create cookie jar
-    curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST $LOGIN -L --post302 2>&1 | grep -q "$LOGINCHECK";
+    _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST $LOGIN -L --post302 2>&1 | grep -q \"$LOGINCHECK\"";
 
     if [[ $? != 0 ]]; then #LOGIN DIDNT SUCCEED
         printf "\n%s" "Incorrect username / password.";
@@ -82,7 +89,7 @@ readLoginData() {
 getCourseList() {
     if [[ ! -a "$DESKTOP" ]]; then
         printf "\n%s\n" "Retrieving desktop...";
-        curl --silent -c "$COOKIES" -d "login=$UN&password=$PW" -X POST "$LOGIN" -L --post302 -o "$DESKTOP";
+        _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST \"$LOGIN\" -L --post302 -o \"$DESKTOP\"";
     else
         printf "\n%s\n" "Reading desktop...";
     fi
@@ -123,7 +130,8 @@ readCourseList() {
 downloadCourse() {
     FILENAME="./MOLE.$CID.complete.zip";
     printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME...";
-    curl --silent --output "$FILENAME" -b "$COOKIES" -d "cmd=exDownload&file=&cidReset=true&cidReq=$CID" -G $DOWNLOAD;
+
+    _trapCmd "curl --silent \"curl --output \"$FILENAME\" -b \"$COOKIES\" -d \"cmd=exDownload&file=&cidReset=true&cidReq=$CID\" -G $DOWNLOAD";
 
     if [[ $? == 0 ]]; then
         printf "\n%s" "Downloaded @ $FILENAME";
@@ -189,10 +197,12 @@ done
 # Unset Global Variables
 unset UN;
 unset PW;
-unset COURSES;
-unset LOGINDATA;
 unset LOGIN;
+unset TEMP;
+unset COOKIES;
+unset LOGINDATA;
 unset LOGINCHECK;
+unset COURSES;
 unset DOWNLOAD;
 unset COURSELIST;
 unset C;
