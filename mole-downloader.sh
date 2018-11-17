@@ -17,7 +17,7 @@ declare -A COURSELIST;
 DESKTOP="$TEMP/desktop.html";
 
 _trapCmd() {
-    trap 'kill -TERM $PID' TERM
+    trap 'kill -TERM $PID; exit 130;' TERM
     eval "$1" &
     PID=$!
     wait $PID
