@@ -187,7 +187,7 @@ while [[ true ]]; do
     elif [[ ! ${COURSELIST[$CID]} ]]; then
         printf "\n%s" "Invalid course code.";
     else
-        donwloadCourse;
+        downloadCourse;
     fi
 done
 
