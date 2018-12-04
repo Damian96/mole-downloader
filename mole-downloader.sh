@@ -127,9 +127,8 @@ readCourseList() {
     done < $COURSES
 }
 
-# @FIXME:
 downloadCourse() {
-    FILENAME="./MOLE.$CID.complete.zip";
+    FILENAME="./${COURSELIST[$CID]}.zip";
     printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME...";
 
     _trapCmd "curl --silent --output \"$FILENAME\" -b \"$COOKIES\" -d \"cmd=exDownload&file=&cidReset=true&cidReq=$CID\" -G $DOWNLOAD";
