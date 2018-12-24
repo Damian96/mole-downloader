@@ -166,7 +166,7 @@ while [[ true ]]; do
     printf "\n\n%s" "Mole's Course List:";
 
     for C in "${!COURSELIST[@]}"; do
-        printf "\n%s: %s" "$C" "${COURSELIST[$C]}"
+        printf "\n%s:\t\t%s" "$C" "${COURSELIST[$C]}"
     done
 
     printf "\n\n%s" "Insert 'q' or 'Q' to exit.";
