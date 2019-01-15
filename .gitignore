@@ -1,3 +1,19 @@
+/~/
 /Backups/
 /User/
+/Cache/
+/CachedData/
+/CachedExtensions/
+/Local Storage/
+/logs/
+Cookies
+Cookies-journal
+languagepacks.json
+machineid
+Preferences
+storage.json
+
+/moleDownloader/
+/.vscode/
+/temp_mole-downloader/
 *.zip
