@@ -31,10 +31,6 @@ bash flush.sh
 bash unzip.sh
 ```
 
-# Notes
-
-- Every course you download, will be taken into account to mole's student statistics.
-
 # Contributors
 
 Created by [Damian96](https://github.com/Damian96)
