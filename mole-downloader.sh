@@ -128,7 +128,10 @@ readCourseList() {
 }
 
 downloadCourse() {
-    FILENAME="./${COURSELIST[$CID]}.zip";
+    FILENAME="${COURSELIST[$CID]}.zip";
+    FILENAME="${FILENAME/\//-}";
+    FILENAME="./${FILENAME}";
+
     printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME...";
 
     _trapCmd "curl --silent --output \"$FILENAME\" -b \"$COOKIES\" -d \"cmd=exDownload&file=&cidReset=true&cidReq=$CID\" -G $DOWNLOAD";
@@ -166,12 +169,17 @@ while [[ true ]]; do
     printf "\n\n%s" "Mole's Course List:";
 
     for C in "${!COURSELIST[@]}"; do
-        printf "\n%s:\t\t%s" "$C" "${COURSELIST[$C]}"
+        if [[ "${#C}" -ge 7 ]]; then
+            printf "\n%s:\t%s" "$C" "${COURSELIST[$C]}";
+        else
+            printf "\n%s:\t\t%s" "$C" "${COURSELIST[$C]}";
+        fi;
     done
 
     printf "\n\n%s" "Insert 'q' or 'Q' to exit.";
     printf "\n%s" "Insert 'a' or 'A' to download all courses.";
-    printf "\n%s" "Please insert the course code: ";
+    printf "\n%s" "Download multiple courses by inserting the course codes seperated by spaces."
+    printf "\n%s" "Please insert the course code(s): ";
     read -r CID;
 
     printf "\n%s\n" "Make sure you delete the '$TEMP' folder when you are done!";
@@ -183,6 +191,17 @@ while [[ true ]]; do
         for C in "${!COURSELIST[@]}"; do
             CID=$C;
             downloadCourse;
+        done
+    elif [[ $CID = *" "* ]]; then
+        IFS=' ' read -r -a MCID <<< "$CID"
+
+        for C in  "${MCID[@]}"; do
+            if [[ ${COURSELIST[$C]} ]]; then
+                CID=$C;
+                downloadCourse;
+            else
+                printf "\n%s" "Invalid course id \"$C\", skipping...";
+            fi
         done
     elif [[ ! ${COURSELIST[$CID]} ]]; then
         printf "\n%s" "Invalid course code.";
