@@ -87,12 +87,8 @@ readLoginData() {
 }
 
 getCourseList() {
-    if [[ ! -a "$DESKTOP" ]]; then
-        printf "\n%s\n" "Retrieving desktop...";
-        _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST \"$LOGIN\" -L --post302 -o \"$DESKTOP\"";
-    else
-        printf "\n%s\n" "Reading desktop...";
-    fi
+    printf "\n%s\n" "Retrieving desktop...";
+    _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST \"$LOGIN\" -L --post302 -o \"$DESKTOP\"";
 
     local INDEX=0;
     while IFS='' read -r line || [[ -n "$line" ]]; do
@@ -176,7 +172,8 @@ while [[ true ]]; do
         fi;
     done
 
-    printf "\n\n%s" "Insert 'q' or 'Q' to exit.";
+    printf "\n\n%s" "If you don not see a course you have enrolled on the list, insert 'r' or 'R' to refresh.";
+    printf "\n%s" "Insert 'q' or 'Q' to exit.";
     printf "\n%s" "Insert 'a' or 'A' to download all courses.";
     printf "\n%s" "Download multiple courses by inserting the course codes seperated by spaces."
     printf "\n%s" "Please insert the course code(s): ";
@@ -192,6 +189,8 @@ while [[ true ]]; do
             CID=$C;
             downloadCourse;
         done
+    elif [[ "$CID" == "r" || "$CID" == "R" ]]; then
+        getCourseList;
     elif [[ $CID = *" "* ]]; then
         IFS=' ' read -r -a MCID <<< "$CID"
 
