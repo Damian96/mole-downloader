@@ -177,7 +177,7 @@ while [[ true ]]; do
         fi;
     done
 
-    printf "\n\n%s" "If you don not see a course you have enrolled on the list, insert 'r' or 'R' to refresh.";
+    printf "\n\n%s" "If you don't see a course you have enrolled on the list, insert 'r' or 'R' to refresh.";
     printf "\n%s" "Insert 'q' or 'Q' to exit.";
     printf "\n%s" "Insert 'a' or 'A' to download all courses.";
     printf "\n%s" "Download multiple courses by inserting the course codes seperated by spaces."
