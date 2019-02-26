@@ -140,6 +140,11 @@ downloadCourse() {
 }
 
 # Initialization
+if ! [ -x "$(command -v curl)" ]; then
+    printf "\n%s" "Error: Package \"curl\" doesn't exist";
+    exit 126;
+fi
+
 if [[ ! -d "$TEMP" ]]; then # Temp folder does not exist
     printf "%s\n" "Creating data folder..." ;
     printf "%s\n" "Make sure you delete the '$TEMP' folder when you are done!";
