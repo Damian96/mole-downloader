@@ -133,9 +133,9 @@ downloadCourse() {
     _trapCmd "curl --silent --output \"$FILENAME\" -b \"$COOKIES\" -d \"cmd=exDownload&file=&cidReset=true&cidReq=$CID\" -G $DOWNLOAD";
 
     if [[ $? == 0 ]]; then
-        printf "\n%s" "Downloaded @ $FILENAME";
+        printf "\n%s\n" "Downloaded @ $FILENAME";
     else
-        printf "\n%s" "Something went wrong while downloading course $CID.";
+        printf "\n%s\n" "Something went wrong while downloading course $CID.";
     fi
 }
 
