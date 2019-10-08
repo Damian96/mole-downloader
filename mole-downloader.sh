@@ -3,6 +3,17 @@
 # Enable Debugging Mode
 # set -x;
 
+printf "%s\n" "  ___ _  _ _____ ___ ___ _  _   _ _____ ___ ___  _  _   _   _    
+ |_ _| \| |_   _| __| _ \ \| | /_\_   _|_ _/ _ \| \| | /_\ | |   
+  | || .\` | | | | _||   / .\` |/ _ \| |  | | (_) | .\` |/ _ \| |__ 
+ |___|_|\_|_|_| |___|_|_\_|\_/_/ \_\_| |___\___/|_|\_/_/ \_\____|
+ | __/_\ / __| | | | ||_   _\ \ / /                              
+ | _/ _ \ (__| |_| | |__| |  \ V /                               
+ |_/_/_\_\___|\___/|____|_|   |_|                                
+ |  \/  |/ _ \| |  | __|                                         
+ | |\/| | (_) | |__| _|                                          
+ |_|  |_|\___/|____|___|                                         "
+
 # Initialize Global Variables
 UN="";
 PW="";
@@ -167,7 +178,7 @@ else
 fi
 
 while [[ true ]]; do
-    printf "\n\n%s" "Mole's Course List:";
+    printf "\n%s" "Mole's Course List:";
 
     for C in "${!COURSELIST[@]}"; do
         if [[ "${#C}" -gt 7 ]]; then
@@ -177,11 +188,11 @@ while [[ true ]]; do
         fi;
     done
 
-    printf "\n\n%s" "If you don't see a course you have enrolled on the list, insert 'r' or 'R' to refresh.";
-    printf "\n%s" "Insert 'q' or 'Q' to exit.";
-    printf "\n%s" "Insert 'a' or 'A' to download all courses.";
-    printf "\n%s" "Download multiple courses by inserting the course codes seperated by spaces."
-    printf "\n%s" "Please insert the course code(s): ";
+    printf "\n\n%s" "[R/r]efresh.";
+    printf "\n%s" "[Q/q]uit.";
+    printf "\n%s" "Download [A/a]ll courses.";
+    printf "\n%s" "or download multiple courses separated by spaces: CCPA, CCPB, ..., CCPZ."
+    printf "\n%s" "Please insert the command / code(s):";
     read -r CID;
 
     printf "\n%s\n" "Make sure you delete the '$TEMP' folder when you are done!";
