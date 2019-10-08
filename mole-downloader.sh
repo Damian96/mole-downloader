@@ -133,9 +133,9 @@ downloadCourse() {
     _trapCmd "curl --silent --output \"$FILENAME\" -b \"$COOKIES\" -d \"cmd=exDownload&file=&cidReset=true&cidReq=$CID\" -G $DOWNLOAD";
 
     if [[ $? == 0 ]]; then
-        printf "\n%s" "Downloaded @ $FILENAME";
+        printf "\n%s\n" "Downloaded @ $FILENAME";
     else
-        printf "\n%s" "Something went wrong while downloading course $CID.";
+        printf "\n%s\n" "Something went wrong while downloading course $CID.";
     fi
 }
 
@@ -170,10 +170,10 @@ while [[ true ]]; do
     printf "\n\n%s" "Mole's Course List:";
 
     for C in "${!COURSELIST[@]}"; do
-        if [[ "${#C}" -ge 7 ]]; then
-            printf "\n%s:\t%s" "$C" "${COURSELIST[$C]}";
+        if [[ "${#C}" -gt 7 ]]; then
+            printf "\n\e[94m%s\e[0m\t%s" "$C" "${COURSELIST[$C]}";
         else
-            printf "\n%s:\t\t%s" "$C" "${COURSELIST[$C]}";
+            printf "\n\e[94m%s\e[0m\t\t%s" "$C" "${COURSELIST[$C]}";
         fi;
     done
 
