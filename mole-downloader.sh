@@ -179,10 +179,10 @@ while [[ true ]]; do
         fi
     done
 
-    printf "\n\n%s" "[R/r]efresh."
-    printf "\n%s" "[Q/q]uit."
-    printf "\n%s" "Download [A/a]ll courses."
-    printf "\n%s" "or download multiple courses separated by spaces: CCPA, CCPB, ..., CCPZ."
+    printf "\n%s" "[A/a]ll"
+    printf "\n%s" "Multiple: CCPA, CCPB, ..., CCPZ"
+    printf "\n\n%s" "[R/r]efresh"
+    printf "\n%s" "[Q/q]uit"
     printf "\n%s" "Please insert the command / code(s):"
     read -r CID
 
