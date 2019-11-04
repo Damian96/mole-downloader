@@ -1,0 +1,249 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"manag",
+				"mangareader"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"color ",
+				"UI: Select Color Scheme"
+			],
+			[
+				"Insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Color",
+				"UI: Select Color Scheme"
+			],
+			[
+				"INstall ",
+				"Package Control: Install Package"
+			],
+			[
+				"Install ",
+				"Install Package Control"
+			],
+			[
+				"To spa",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"to spa",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"Refre",
+				"Project: Refresh Folders"
+			],
+			[
+				"Color T",
+				"UI: Select Color Scheme"
+			],
+			[
+				"Pre",
+				"Preferences: Settings"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 150.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/damian/7unzipass.sh",
+		"/home/damian/7zipass.sh",
+		"/home/damian/workspace/fnd/fnd.sh",
+		"/home/damian/.ssh/id_rsa.pub",
+		"/home/damian/workspace/podokomia/gulpfile.js",
+		"/home/damian/Downloads/crusader_kings_2_dlc.html",
+		"/home/damian/Documents/CRUSADER_KINGS_2_BUNDLE.txt",
+		"/etc/ppp/chap-secret",
+		"/home/damian/ff-passwords.json",
+		"/home/damian/workspace/http-response/package.json",
+		"/home/damian/workspace/http-response/package-lock.json",
+		"/home/damian/workspace/ff-18-forget/.gitignore",
+		"/home/damian/workspace/ff-18-forget/gruntfile.js",
+		"/home/damian/workspace/ff-18-forget/package.json",
+		"/home/damian/workspace/ff-18-forget/.gruntfile",
+		"/home/damian/workspace/ff-18-forget/manifest.json",
+		"/home/damian/workspace/ff-18-forget/main.js",
+		"/home/damian/workspace/ff-18-forget/LICENSE",
+		"/home/damian/workspace/opdownloader/opdownloader.sh",
+		"/home/damian/workspace/opdownloader/.gitignore",
+		"/home/damian/workspace/opdownloader/_temp-opdownloader/onepiece-root.html",
+		"/home/damian/workspace/opdownloader/opflush.sh",
+		"/home/damian/workspace/opdownloader/.editorconfig",
+		"/home/damian/workspace/opdownloader/inst.sh",
+		"/tmp/Ίρις Τ.html",
+		"/home/damian/.profile",
+		"/home/damian/.bashrc",
+		"/home/damian/.gitconfig",
+		"/home/damian/workspace/opdownloader/rmop.sh",
+		"/home/damian/workspace/fnd/LICENSE",
+		"/home/damian/workspace/opdownloader/01.html",
+		"/home/damian/workspace/mole-downloader/mole-downloader.sh",
+		"/tmp/One Piece - Chap: 906 - Manga Reader.html",
+		"/home/damian/workspace/opdownloader/opdownloader",
+		"/home/damian/Documents/kivernisi-mitsotaki.txt",
+		"/tmp/Read manga One Piece Chapter 906: The Holy Land Mary Geoise online in high quality.html",
+		"/home/damian/cosmote/cosmote.conf",
+		"/home/damian/cosmote/cosmote.lst",
+		"/etc/default/grub.d/init-select.cfg",
+		"/home/damian/workspace/auto-transcoder/auto-transcoder.sh",
+		"/opt/SublimeText_3.2.1/lol.txt"
+	],
+	"find":
+	{
+		"height": 37.0
+	},
+	"find_in_files":
+	{
+		"height": 116.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 37.0
+	},
+	"input":
+	{
+		"height": 49.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "mole-downloader.sublime-project",
+	"replace":
+	{
+		"height": 70.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 195.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

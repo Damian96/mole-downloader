@@ -1,3 +1,5 @@
+!.gitignore
+
 /~/
 /Backups/
 /User/
@@ -14,6 +16,11 @@ Preferences
 storage.json
 
 /moleDownloader/
-/.vscode/
 /temp_mole-downloader/
 *.zip
+
+/.vscode/
+.sublime-*
+
+munzip
+moled

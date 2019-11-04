@@ -1,241 +1,224 @@
 #!/bin/bash
 
 # Enable Debugging Mode
-# set -x;
+# set -x
+
+moledUnset() {
+    unset UN
+    unset PW
+    unset LOGIN
+    unset TEMP
+    unset COOKIES
+    unset LOGINDATA
+    unset LOGINCHECK
+    unset COURSES
+    unset DOWNLOAD
+    unset COURSELIST
+    unset C
+    unset DESKTOP
+    unset FILENAME
+    unset CID
+
+    unset readLoginData
+    unset readCourseList
+    unset getCourseList
+}
+
+printf "%s\n" "  ___ _  _ _____ ___ ___ _  _   _ _____ ___ ___  _  _   _   _    
+ |_ _| \| |_   _| __| _ \ \| | /_\_   _|_ _/ _ \| \| | /_\ | |   
+  | || .\` | | | | _||   / .\` |/ _ \| |  | | (_) | .\` |/ _ \| |__ 
+ |___|_|\_|_|_| |___|_|_\_|\_/_/ \_\_| |___\___/|_|\_/_/ \_\____|
+ | __/_\ / __| | | | ||_   _\ \ / /                              
+ | _/ _ \ (__| |_| | |__| |  \ V /                               
+ |_/_/_\_\___|\___/|____|_|   |_|                                
+ |  \/  |/ _ \| |  | __|                                         
+ | |\/| | (_) | |__| _|                                          
+ |_|  |_|\___/|____|___|                                         "
 
 # Initialize Global Variables
-UN="";
-PW="";
-TEMP="temp_mole-downloader";
-COOKIES="$TEMP/cookies.txt";
-LOGINDATA="$TEMP/login.txt";
-COURSES="$TEMP/course-list.txt";
-LOGIN="https://mole.citycollege.sheffield.eu/claroline/auth/login.php";
-LOGINCHECK="My course list";
-DOWNLOAD="https://mole.citycollege.sheffield.eu/claroline/document/document.php";
-declare -A COURSELIST;
-DESKTOP="$TEMP/desktop.html";
+UN=""
+PW=""
+TEMP="temp_mole-downloader"
+COOKIES="$TEMP/cookies.txt"
+LOGINDATA="$TEMP/login.txt"
+COURSES="$TEMP/course-list.txt"
+LOGIN="https://mole.citycollege.sheffield.eu/claroline/auth/login.php"
+LOGINCHECK="My course list"
+DOWNLOAD="https://mole.citycollege.sheffield.eu/claroline/document/document.php"
+declare -A COURSELIST
+DESKTOP="$TEMP/desktop.html"
 
 _trapCmd() {
-    trap 'kill -TERM $PID; exit 130;' TERM
+    trap 'kill -TERM $PID; moledUnset; exit 130;' TERM
     eval "$1" &
     PID=$!
     wait $PID
 }
 
 getLoginData() {
-
     while [[ true ]]; do
-
         while [[ true ]]; do
-            printf "\n%s" "Please enter your mole.citycollege.sheffield.eu username: ";
-            read -r UN;
+            printf "\n%s" "Please enter your mole.citycollege.sheffield.eu username: "
+            read -r UN
 
             if [[ `expr "$UN" : '[a-z]*'` == 0 ]]; then
-                printf "\n%s" "Invalid username.";
+                printf "\n%s" "Invalid username."
             else
-                break;
+                break
             fi
         done
 
         while [[ true ]]; do
-            printf "\n%s" "Please enter your mole.citycollege.sheffield.eu password: ";
-            read -r -s PW;
+            printf "\n%s" "Please enter your mole.citycollege.sheffield.eu password: "
+            read -r -s PW
 
             if [[ -z "${PW// }" ]]; then
-                continue;
+                continue
             elif [[ `expr "$PW" : '[0-9]{3}[a-z]3[0-9]{3}'` != 0 ]]; then
-                printf "\n%s" "Invalid password.";
-                continue;
+                printf "\n%s" "Invalid password."
+                continue
             else
-                break;
+                break
             fi
         done
 
         # Auth and create cookie jar
-        _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST $LOGIN -L --post302 2>&1 | grep -q \"$LOGINCHECK\"";
+        _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST $LOGIN -L --post302 2>&1 | grep -q \"$LOGINCHECK\""
 
         if [[ $? == 0 ]]; then #LOGIN SUCCEDED
-            printf "\n%s\n%s" "Successfull login." "Stored login data.";
-            printf '%s\n' "$UN" "$PW" > "$LOGINDATA";
-            break;
+            printf "\n%s\n%s" "Successfull login." "Stored login data."
+            printf '%s\n' "$UN" "$PW" > "$LOGINDATA"
+            break
         else
-            printf "\n%s\n" "Invalid username / password.";
+            printf "\n%s\n" "Invalid username / password."
         fi
 
     done
 }
 
-readLoginData() {
-    local COUNT=0;
-    while IFS='' read -r line || [[ -n "$line" ]]; do
-        if [[ "$COUNT" == 0 ]]; then
-            UN=$line;
-            ((COUNT++));
-        elif [[ "$COUNT" == 1 ]]; then
-            PW=$line;
-        fi
-    done < "$LOGINDATA"
-
-    # Auth and create cookie jar
-    _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST $LOGIN -L --post302 2>&1 | grep -q \"$LOGINCHECK\"";
-
-    if [[ $? != 0 ]]; then #LOGIN DIDNT SUCCEED
-        printf "\n%s" "Incorrect username / password.";
-        getLoginData;
-    fi
-}
-
 getCourseList() {
-    printf "\n%s\n" "Retrieving desktop...";
-    _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST \"$LOGIN\" -L --post302 -o \"$DESKTOP\"";
+    printf "\n%s\n" "Retrieving course list..."
+    _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST \"$LOGIN\" -L --post302 -o \"$DESKTOP\""
 
-    local INDEX=0;
+    local INDEX=0
     while IFS='' read -r line || [[ -n "$line" ]]; do
-        local CODE_PATT=".*\?cid=(.*)\">.*";
-        local TITLE_PATT=".*\?cid=.*\">(.*)<\/a>";
+        local CODE_PATT=".*\?cid=(.*)\">.*"
+        local TITLE_PATT=".*\?cid=.*\">(.*)<\/a>"
 
         if [[ $line =~ $CODE_PATT ]]; then
-            local CODE=${BASH_REMATCH[1]};
+            local CODE=${BASH_REMATCH[1]}
             if [[ $line =~ $TITLE_PATT ]]; then
-                local TITLE=${BASH_REMATCH[1]};
-                COURSELIST[$CODE]=$TITLE;
+                local TITLE=${BASH_REMATCH[1]}
+                COURSELIST[$CODE]=$TITLE
             fi
         fi
-
     done < $DESKTOP
 
     for C in "${!COURSELIST[@]}"; do
-        printf "%s,%s\n" "$C" "${COURSELIST[$C]}";
+        printf "%s,%s\n" "$C" "${COURSELIST[$C]}"
     done > $COURSES
 }
 
 readCourseList() {
+    printf "\n%s\n" "Reading course list..."
     while IFS='' read -r line || [[ -n "$line" ]]; do
-
         if [[ ! -z "${line// }" ]]; then
-            local PARTS;
+            local PARTS
             IFS=',' read -ra PARTS <<< "$line"
-            COURSELIST[${PARTS[0]}]=${PARTS[1]};
-            IFS='';
+            COURSELIST[${PARTS[0]}]=${PARTS[1]}
+            IFS=''
         fi
-
     done < $COURSES
 }
 
 downloadCourse() {
-    FILENAME="${COURSELIST[$CID]}.zip";
-    FILENAME="${FILENAME/\//-}";
-    FILENAME="./${FILENAME}";
+    FILENAME="./${COURSELIST[$CID]/\//-}.zip"
 
-    printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME...";
+    printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME..."
 
-    _trapCmd "curl --silent --output \"$FILENAME\" -b \"$COOKIES\" -d \"cmd=exDownload&file=&cidReset=true&cidReq=$CID\" -G $DOWNLOAD";
+    _trapCmd "curl --silent --output \"$FILENAME\" -b \"$COOKIES\" -d \"cmd=exDownload&file=&cidReset=true&cidReq=$CID\" -G $DOWNLOAD"
 
     if [[ $? == 0 ]]; then
-        printf "\n%s\n" "Downloaded @ $FILENAME";
+        printf "\n%s\n" "Downloaded @ $FILENAME"
     else
-        printf "\n%s\n" "Something went wrong while downloading course $CID.";
+        printf "\n%s\n" "Something went wrong while downloading course $CID."
     fi
 }
 
 # Initialization
 if ! [ -x "$(command -v curl)" ]; then
-    printf "\n%s" "Error: Package \"curl\" doesn't exist";
-    exit 126;
+    printf "\n%s" "Error: Package \"curl\" doesn't exist"
+    moledUnset
+    exit 126
 fi
 
 if [[ ! -d "$TEMP" ]]; then # Temp folder does not exist
-    printf "%s\n" "Creating data folder..." ;
-    printf "%s\n" "Make sure you delete the '$TEMP' folder when you are done!";
-    mkdir "$TEMP";
+    printf "%s\n" "Creating data folder..." 
+    printf "%s\n" "Make sure you delete the '$TEMP' folder when you are done!"
+    mkdir "$TEMP"
 fi
 
 if [[ ! -a "$LOGINDATA" ]]; then # Login Data do not exist
-    getLoginData;
-else
-    printf "\n%s" "Reading login credentials...";
-    readLoginData;
+    getLoginData
 fi
 
 if [[ ! -a "$COURSES" ]]; then # Login Data do not exist
-    printf "\n%s\n" "Retrieving course list...";
-    getCourseList;
+    getCourseList
 else
-    printf "\n%s\n" "Reading course list...";
-    readCourseList;
+    readCourseList
 fi
 
 while [[ true ]]; do
-    printf "\n\n%s" "Mole's Course List:";
+    printf "\n%s" "Mole's Course List:"
 
     for C in "${!COURSELIST[@]}"; do
         if [[ "${#C}" -gt 7 ]]; then
-            printf "\n\e[94m%s\e[0m\t%s" "$C" "${COURSELIST[$C]}";
+            printf "\n\e[94m%s\e[0m\t%s" "$C" "${COURSELIST[$C]}"
         else
-            printf "\n\e[94m%s\e[0m\t\t%s" "$C" "${COURSELIST[$C]}";
-        fi;
+            printf "\n\e[94m%s\e[0m\t\t%s" "$C" "${COURSELIST[$C]}"
+        fi
     done
 
-    printf "\n\n%s" "If you don't see a course you have enrolled on the list, insert 'r' or 'R' to refresh.";
-    printf "\n%s" "Insert 'q' or 'Q' to exit.";
-    printf "\n%s" "Insert 'a' or 'A' to download all courses.";
-    printf "\n%s" "Download multiple courses by inserting the course codes seperated by spaces."
-    printf "\n%s" "Please insert the course code(s): ";
-    read -r CID;
+    printf "\n%s" "[A/a]ll"
+    printf "\n%s" "Multiple: CCPA, CCPB, ..., CCPZ"
+    printf "\n\n%s" "[R/r]efresh"
+    printf "\n%s" "[Q/q]uit"
+    printf "\n%s" "Please insert the command / code(s):"
+    read -r CID
 
-    printf "\n%s\n" "Make sure you delete the '$TEMP' folder when you are done!";
+    printf "\n%s\n" "Make sure you delete the '$TEMP' folder when you are done!"
 
     if [[ "$CID" == "q" || "$CID" == "Q" ]]; then
-        printf "\n%s\n" "Bye!";
-        break;
+        printf "\n%s\n" "Bye!"
+        break
     elif [[ "$CID" == "a" || "$CID" == "A" ]]; then
         for C in "${!COURSELIST[@]}"; do
-            CID=$C;
-            downloadCourse;
+            CID=$C
+            downloadCourse
         done
     elif [[ "$CID" == "r" || "$CID" == "R" ]]; then
-        getCourseList;
+        getCourseList
     elif [[ $CID = *" "* ]]; then
         IFS=' ' read -r -a MCID <<< "$CID"
 
         for C in  "${MCID[@]}"; do
             if [[ ${COURSELIST[$C]} ]]; then
-                CID=$C;
-                downloadCourse;
+                CID=$C
+                downloadCourse
             else
-                printf "\n%s" "Invalid course id \"$C\", skipping...";
+                printf "\n%s" "Invalid course id \"$C\", skipping..."
             fi
         done
     elif [[ ! ${COURSELIST[$CID]} ]]; then
-        printf "\n%s" "Invalid course code.";
+        printf "\n%s" "Invalid course code."
     else
-        downloadCourse;
+        downloadCourse
     fi
 done
 
 # Disable Debugging mode
-# set +x;
+# set +x
 
 # Unset Global Variables
-unset UN;
-unset PW;
-unset LOGIN;
-unset TEMP;
-unset COOKIES;
-unset LOGINDATA;
-unset LOGINCHECK;
-unset COURSES;
-unset DOWNLOAD;
-unset COURSELIST;
-unset C;
-unset DESKTOP;
-unset FILENAME;
-unset CID;
-
-unset readLoginData;
-unset getLoginData;
-unset readCourseList;
-unset getCourseList;
-
-exit 0;
+moledUnset
+exit 0
