@@ -9,7 +9,6 @@ moledUnset() {
     unset LOGIN
     unset TEMP
     unset COOKIES
-    unset LOGINDATA
     unset LOGINCHECK
     unset COURSES
     unset DOWNLOAD
@@ -40,7 +39,6 @@ UN=""
 PW=""
 TEMP="temp_mole-downloader"
 COOKIES="$TEMP/cookies.txt"
-LOGINDATA="$TEMP/login.txt"
 COURSES="$TEMP/course-list.txt"
 LOGIN="https://mole.citycollege.sheffield.eu/claroline/auth/login.php"
 LOGINCHECK="My course list"
@@ -69,16 +67,16 @@ getLoginData() {
         done
 
         while [[ true ]]; do
-            printf "\n%s" "Please enter your mole.citycollege.sheffield.eu password: "
+            printf "\n%s\n%s" "Please enter your mole.citycollege.sheffield.eu password:" "(will not be echoed):"
             read -r -s PW
 
-            if [[ -z "${PW// }" ]]; then
-                continue
-            elif [[ `expr "$PW" : '[0-9]{3}[a-z]3[0-9]{3}'` != 0 ]]; then
+            REGEX="^[[:digit:]]{3}[[:lower:]]{3}[[:digit:]]{3}$"
+            PW="${PW//[[:space:]]/}"
+            if ([[ ! -z "$PW" ]] && [[ $PW =~ $REGEX ]]); then
+                break
+            else
                 printf "\n%s" "Invalid password."
                 continue
-            else
-                break
             fi
         done
 
@@ -87,12 +85,11 @@ getLoginData() {
 
         if [[ $? == 0 ]]; then #LOGIN SUCCEDED
             printf "\n%s\n%s" "Successfull login." "Stored login data."
-            printf '%s\n' "$UN" "$PW" > "$LOGINDATA"
             break
         else
-            printf "\n%s\n" "Invalid username / password."
+            printf "\n\n%s\n" "Could not authenticate."
+            printf "%s\n" "Invalid username / password"
         fi
-
     done
 }
 
@@ -158,11 +155,9 @@ if [[ ! -d "$TEMP" ]]; then # Temp folder does not exist
     mkdir "$TEMP"
 fi
 
-if [[ ! -a "$LOGINDATA" ]]; then # Login Data do not exist
-    getLoginData
-fi
+getLoginData # GET LOGIN DATA
 
-if [[ ! -a "$COURSES" ]]; then # Login Data do not exist
+if [[ ! -a "$COURSES" ]]; then # COURSE DATA do not exist
     getCourseList
 else
     readCourseList
