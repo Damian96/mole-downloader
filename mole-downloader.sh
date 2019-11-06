@@ -129,7 +129,7 @@ readCourseList() {
 }
 
 downloadCourse() {
-    FILENAME="./${COURSELIST[$CID]/\//-}.zip"
+    FILENAME="$PWD/${COURSELIST[$CID]/\//-}.zip"
 
     printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME..."
 
