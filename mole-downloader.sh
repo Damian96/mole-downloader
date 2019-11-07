@@ -46,6 +46,7 @@ DOWNLOAD="https://mole.citycollege.sheffield.eu/claroline/document/document.php"
 declare -A COURSELIST
 DESKTOP="$TEMP/desktop.html"
 
+# TODO: store child proccess IDs for concurrent downloads
 _trapCmd() {
     trap 'kill -TERM $PID; moledUnset; exit 130;' TERM
     eval "$1" &
@@ -56,7 +57,7 @@ _trapCmd() {
 getLoginData() {
     while [[ true ]]; do
         while [[ true ]]; do
-            printf "\n%s" "Please enter your mole.citycollege.sheffield.eu username: "
+            printf "\n%s" "username:"
             read -r UN
 
             if [[ `expr "$UN" : '[a-z]*'` == 0 ]]; then
@@ -67,7 +68,7 @@ getLoginData() {
         done
 
         while [[ true ]]; do
-            printf "\n%s\n%s" "Please enter your mole.citycollege.sheffield.eu password:" "(will not be echoed):"
+            printf "\n%s\n%s" "password:" "(will not be echoed):"
             read -r -s PW
 
             REGEX="^[[:digit:]]{3}[[:lower:]]{3}[[:digit:]]{3}$"
@@ -84,11 +85,10 @@ getLoginData() {
         _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST $LOGIN -L --post302 2>&1 | grep -q \"$LOGINCHECK\""
 
         if [[ $? == 0 ]]; then #LOGIN SUCCEDED
-            printf "\n%s\n%s" "Successfull login." "Stored login data."
+            printf "\n%s\n%s" "Successfull login."
             break
         else
-            printf "\n\n%s\n" "Could not authenticate."
-            printf "%s\n" "Invalid username / password"
+            printf "\n\n%s\n%s\n" "Could not authenticate." "Invalid username / password."
         fi
     done
 }
@@ -128,7 +128,13 @@ readCourseList() {
     done < $COURSES
 }
 
+# TODO: make downloads concurrents
+##
+# Pre-conditions: array COURSELIST, string CID
+# Post-conditions: DOWNLOAD specified COURSE
+##
 downloadCourse() {
+    local FILENAME
     FILENAME="$PWD/${COURSELIST[$CID]/\//-}.zip"
 
     printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME..."
@@ -137,8 +143,10 @@ downloadCourse() {
 
     if [[ $? == 0 ]]; then
         printf "\n%s\n" "Downloaded @ $FILENAME"
+        echo 0
     else
         printf "\n%s\n" "Something went wrong while downloading course $CID."
+        echo 1
     fi
 }
 
@@ -150,8 +158,7 @@ if ! [ -x "$(command -v curl)" ]; then
 fi
 
 if [[ ! -d "$TEMP" ]]; then # Temp folder does not exist
-    printf "%s\n" "Creating data folder..." 
-    printf "%s\n" "Make sure you delete the '$TEMP' folder when you are done!"
+    printf "%s\n" "Creating data folder..." "Make sure you delete the '$TEMP' folder when you are done!"
     mkdir "$TEMP"
 fi
 
@@ -174,8 +181,8 @@ while [[ true ]]; do
         fi
     done
 
-    printf "\n%s" "[A/a]ll"
     printf "\n%s" "Multiple: CCPA, CCPB, ..., CCPZ"
+    printf "\n%s" "[A/a]ll"
     printf "\n%s" "[R/r]efresh"
     printf "\n%s" "[Q/q]uit"
     printf "\n%s" "Please insert the command / code(s):"
@@ -189,7 +196,7 @@ while [[ true ]]; do
     elif [[ "$CID" == "a" || "$CID" == "A" ]]; then
         for C in "${!COURSELIST[@]}"; do
             CID=$C
-            downloadCourse
+            CODE=$(downloadCourse)
         done
     elif [[ "$CID" == "r" || "$CID" == "R" ]]; then
         getCourseList
