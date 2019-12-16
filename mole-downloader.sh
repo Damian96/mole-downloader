@@ -129,7 +129,7 @@ readCourseList() {
 }
 
 downloadCourse() {
-    FILENAME="./${COURSELIST[$CID]/\//-}.zip"
+    FILENAME="$PWD/${COURSELIST[$CID]/\//-}.zip"
 
     printf "\n%s\n" "Downloading '${COURSELIST[$CID]}' into $FILENAME..."
 
@@ -176,7 +176,7 @@ while [[ true ]]; do
 
     printf "\n%s" "[A/a]ll"
     printf "\n%s" "Multiple: CCPA, CCPB, ..., CCPZ"
-    printf "\n\n%s" "[R/r]efresh"
+    printf "\n%s" "[R/r]efresh"
     printf "\n%s" "[Q/q]uit"
     printf "\n%s" "Please insert the command / code(s):"
     read -r CID
