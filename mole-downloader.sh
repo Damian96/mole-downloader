@@ -96,12 +96,11 @@ getLoginData() {
 getCourseList() {
     printf "\n%s\n" "Retrieving course list..."
     _trapCmd "curl --silent -c \"$COOKIES\" -d \"login=$UN&password=$PW\" -X POST \"$LOGIN\" -L --post302 -o \"$DESKTOP\""
+    local CODE_PATT=".*\?cid=(.*)\">.*"
+    local TITLE_PATT=".*\?cid=.*\">(.*)<\/a>"
 
     local INDEX=0
     while IFS='' read -r line || [[ -n "$line" ]]; do
-        local CODE_PATT=".*\?cid=(.*)\">.*"
-        local TITLE_PATT=".*\?cid=.*\">(.*)<\/a>"
-
         if [[ $line =~ $CODE_PATT ]]; then
             local CODE=${BASH_REMATCH[1]}
             if [[ $line =~ $TITLE_PATT ]]; then
